@@ -5,7 +5,7 @@ CC := gcc
 
 BINS := $(patsubst ${DIR_SRC}/%.c,${DIR_BIN}/%,$(wildcard ${DIR_SRC}/*.c))
 
-FLAGS := -g -Wall --pedantic
+FLAGS := -g -Wall --pedantic -lX11
 
 all: ${BINS}
 
