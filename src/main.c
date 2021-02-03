@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include <X11/Xlib.h>
 
@@ -32,22 +33,34 @@ main(void)
   );
 
   int num_configs = 0;
-  GLXFBConfig * config = glXChooseFBConfig(display, screen_default, 0, &num_configs);
-  if (config == NULL) {
+  GLXFBConfig * configs = glXChooseFBConfig(display, screen_default, 0, &num_configs);
+  if (configs == NULL) {
     printf("%s\n", "could not find a config, aborting.\n");
     return EXIT_FAILURE;
   }
 
   printf("Found %d number of configurations.\n", num_configs);
-  XVisualInfo * info = NULL;
+  XVisualInfo * visual = NULL;
   for (int ii=0; ii<num_configs; ii++) {
-    info = glXGetVisualFromFBConfig(display, config[ii]);
-    if (info != NULL) {
+    visual = glXGetVisualFromFBConfig(display, configs[ii]);
+    if (visual != NULL) {
       printf("Found matching config: %d\n", ii);
       break;
     }
+    if (ii+1 == num_configs) {
+      printf("%s\n", "Found no matching configuration.");
+      return EXIT_FAILURE;
+    }
   }
 
+  GLXContext context = glXCreateContext(display, visual, 0, true);
+  bool ok_current = glXMakeCurrent(display, window, context);
+  if (!ok_current) {
+    printf("%s\n", "Setting context did not work, aborting.\n");
+    return EXIT_FAILURE;
+  }
+
+  printf("Running the following OpenGL context: %s\n", glGetString(GL_VERSION));
 
   XEvent event = {0};
   XSelectInput(display, window, ExposureMask | KeyPressMask | KeyReleaseMask);
