@@ -122,11 +122,13 @@ main(void)
   }
 
   int attribs[] = {
-//    GLX_BUFFER_SIZE, 32,
+    GLX_BUFFER_SIZE, 32,
+    GLX_ALPHA_SIZE, 8,
+    GLX_SAMPLES, 8,
     GLX_DOUBLEBUFFER, true,
+    GLX_RENDER_TYPE, GLX_RGBA_BIT,
     GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-//    GLX_ALPHA_SIZE, 8,
-//    GLX_SAMPLES, 8,
+    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
     None
   };
 
@@ -149,39 +151,46 @@ main(void)
     printf("  %d\n", id_conf);
   }
 
+  printf("%s\n", "Picking first config of the lot.");
 
+  XVisualInfo * visual = glXGetVisualFromFBConfig(display, configs_choosen[0]);
 
-//  GLXContext context = glXCreateContext(display, visual, 0, true);
-//  bool ok_current = glXMakeCurrent(display, window, context);
-//  if (!ok_current) {
-//    printf("%s\n", "Setting context did not work, aborting.\n");
-//    return EXIT_FAILURE;
-//  }
-//
-//  printf("Running the following OpenGL context: %s\n", glGetString(GL_VERSION));
+  if (visual == NULL) {
+    printf("%s\n", "There was not matching visual, aborting.");
+    return EXIT_FAILURE;
+  }
 
-//  XEvent event = {0};
-//  XSelectInput(display, window, ExposureMask | KeyPressMask | KeyReleaseMask);
-//
-//  XMapWindow(display, window);
-//
-//  for (;;) {
-//    XNextEvent(display, &event);
-//    switch (event.type) {
-//
-//      case Expose:
-//        printf("%s\n", "Window was exposed!");
-//        break;
-//
-//      case KeyPress:
-//        printf("%s\n", "Key was pressed.");
-//        break;
-//
-//      case KeyRelease:
-//        printf("%s\n", "Key was released.");
-//        break;
-//
-//    }
-//  }
+  GLXContext context = glXCreateContext(display, visual, 0, true);
+  bool ok_current = glXMakeCurrent(display, window, context);
+  if (!ok_current) {
+    printf("%s\n", "Setting context did not work, aborting.\n");
+    return EXIT_FAILURE;
+  }
+
+  printf("Running the following OpenGL context: %s\n", glGetString(GL_VERSION));
+
+  XEvent event = {0};
+  XSelectInput(display, window, ExposureMask | KeyPressMask | KeyReleaseMask);
+
+  XMapWindow(display, window);
+
+  for (;;) {
+    XNextEvent(display, &event);
+    switch (event.type) {
+
+      case Expose:
+        printf("%s\n", "Window was exposed!");
+        break;
+
+      case KeyPress:
+        printf("%s\n", "Key was pressed.");
+        break;
+
+      case KeyRelease:
+        printf("%s\n", "Key was released.");
+        break;
+
+    }
+  }
 
 }
