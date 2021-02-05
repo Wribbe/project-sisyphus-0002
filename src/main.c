@@ -86,8 +86,7 @@ main(void)
 
   XMapWindow(display, window);
 
-  bool ok_current = glXMakeCurrent(display, window, context);
-  if (!ok_current) {
+  if (!glXMakeCurrent(display, window, context)) {
     printf("%s\n", "Setting context did not work, aborting.\n");
     return EXIT_FAILURE;
   }
