@@ -59,7 +59,8 @@ main(void)
   );
 
   PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB;
-  glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress(
+  glXCreateContextAttribsARB =
+    (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress(
       (const GLubyte*)"glXCreateContextAttribsARB"
   );
 
@@ -70,7 +71,13 @@ main(void)
     None
   };
 
-  GLXContext context = glXCreateContextAttribsARB(display, configs_choosen[0], 0, true, attrib_config);
+  GLXContext context = glXCreateContextAttribsARB(
+    display
+    ,configs_choosen[0]
+    ,0
+    ,true
+    ,attrib_config
+  );
 
   if (context == NULL) {
     printf("%s\n", "No context was returned, aborting.");
@@ -85,7 +92,10 @@ main(void)
     return EXIT_FAILURE;
   }
 
-  printf("Running the following OpenGL context: %s\n", glGetString(GL_VERSION));
+  printf(
+    "Running the following OpenGL context: %s\n"
+    ,glGetString(GL_VERSION)
+  );
 
   for (;;) {
   }
