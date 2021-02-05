@@ -9,6 +9,9 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+//typedef GLXContext (*glXCreateContextAttribsARBProc)
+//    (Display*, GLXFBConfig, GLXContext, Bool, const int*);
+
 int
 main(void)
 {
@@ -121,28 +124,32 @@ main(void)
 
   }
 
-  int attribs[] = {
-    GLX_BUFFER_SIZE, 32,
-    GLX_ALPHA_SIZE, 8,
-    GLX_SAMPLES, 8,
-    GLX_DOUBLEBUFFER, true,
-    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-    None
-  };
-
-//  static int attribs[] = {
-//      GLX_RENDER_TYPE, GLX_RGBA_BIT,
-//      GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-//      GLX_DOUBLEBUFFER, true,
-//      GLX_RED_SIZE, 1,
-//      GLX_GREEN_SIZE, 1,
-//      GLX_BLUE_SIZE, 1,
-//      None
+//  int attribs[] = {
+//    GLX_BUFFER_SIZE, 32,
+//    GLX_ALPHA_SIZE, 8,
+//    GLX_SAMPLES, 8,
+//    GLX_DOUBLEBUFFER, true,
+//    GLX_RENDER_TYPE, GLX_RGBA_BIT,
+//    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+//    None
 //  };
 
-  GLXFBConfig * configs_choosen = glXChooseFBConfig(display, 0, attribs, &num_configs);
+  static int attribs[] = {
+      GLX_RENDER_TYPE, GLX_RGBA_BIT,
+      GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+      GLX_DOUBLEBUFFER, true,
+      GLX_RED_SIZE, 1,
+      GLX_GREEN_SIZE, 1,
+      GLX_BLUE_SIZE, 1,
+      None
+  };
+
+  GLXFBConfig * configs_choosen = glXChooseFBConfig(
+    display
+    ,DefaultScreen(display)
+    ,attribs
+    ,&num_configs
+  );
 
   printf("Got %d configurations back.\n", num_configs);
   for (int ii=0; ii<num_configs; ii++) {
@@ -151,16 +158,43 @@ main(void)
     printf("  %d\n", id_conf);
   }
 
-  printf("%s\n", "Picking first config of the lot.");
+//  printf("%s\n", "Picking first config of the lot.");
+//
+//  XVisualInfo * visual = glXGetVisualFromFBConfig(display, configs_choosen[0]);
+//
+//  if (visual == NULL) {
+//    printf("%s\n", "There was not matching visual, aborting.");
+//    return EXIT_FAILURE;
+//  }
 
-  XVisualInfo * visual = glXGetVisualFromFBConfig(display, configs_choosen[0]);
+  PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB;
+  glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress(
+      (const GLubyte*)"glXCreateContextAttribsARB"
+  );
 
-  if (visual == NULL) {
-    printf("%s\n", "There was not matching visual, aborting.");
+  const int attrib_config[] = {
+    GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
+    GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+    GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+    None
+  };
+
+//  glXCreateContextAttribsARBProc glXCreateContextAttribsARB = 0;
+//  glXCreateContextAttribsARB =
+//      (glXCreateContextAttribsARBProc)
+//      glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
+
+//  GLXContext context = glXCreateContext(display, visual, 0, true);
+//  GLXContext context = glXCreateContextAttribARB(display, configs_choosen[0], 0, true, attrib_config);
+  GLXContext context = glXCreateContextAttribsARB(display, configs_choosen[0], 0, true, attrib_config);
+
+  if (context == NULL) {
+    printf("%s\n", "No context was returned, aborting.");
     return EXIT_FAILURE;
   }
 
-  GLXContext context = glXCreateContext(display, visual, 0, true);
+  XMapWindow(display, window);
+
   bool ok_current = glXMakeCurrent(display, window, context);
   if (!ok_current) {
     printf("%s\n", "Setting context did not work, aborting.\n");
@@ -172,7 +206,6 @@ main(void)
   XEvent event = {0};
   XSelectInput(display, window, ExposureMask | KeyPressMask | KeyReleaseMask);
 
-  XMapWindow(display, window);
 
   for (;;) {
     XNextEvent(display, &event);
