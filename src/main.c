@@ -203,27 +203,27 @@ main(void)
 
   printf("Running the following OpenGL context: %s\n", glGetString(GL_VERSION));
 
-  XEvent event = {0};
-  XSelectInput(display, window, ExposureMask | KeyPressMask | KeyReleaseMask);
+//  XEvent event = {0};
+//  XSelectInput(display, window, ExposureMask | KeyPressMask | KeyReleaseMask);
 
 
   for (;;) {
-    XNextEvent(display, &event);
-    switch (event.type) {
-
-      case Expose:
-        printf("%s\n", "Window was exposed!");
-        break;
-
-      case KeyPress:
-        printf("%s\n", "Key was pressed.");
-        break;
-
-      case KeyRelease:
-        printf("%s\n", "Key was released.");
-        break;
-
-    }
+//    XNextEvent(display, &event);
+//    switch (event.type) {
+//
+//      case Expose:
+//        printf("%s\n", "Window was exposed!");
+//        break;
+//
+//      case KeyPress:
+//        printf("%s\n", "Key was pressed.");
+//        break;
+//
+//      case KeyRelease:
+//        printf("%s\n", "Key was released.");
+//        break;
+//
+//    }
   }
 
 }
