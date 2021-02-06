@@ -5,12 +5,12 @@ CC := gcc
 
 BINS := $(patsubst ${DIR_SRC}/%.c,${DIR_BIN}/%,$(wildcard ${DIR_SRC}/*.c))
 
-FLAGS := -g -Wall --pedantic -lX11 -lGL
+FLAGS := -I. -g -Wall --pedantic -lX11 -lGL
 
 all: ${BINS}
 
 
-${DIR_BIN}/% : ${DIR_SRC}/%.c Makefile | ${DIR_BIN}
+${DIR_BIN}/% : ${DIR_SRC}/%.c lib/graphics.h lib/graphics.c Makefile | ${DIR_BIN}
 	${CC} $(filter %.c %.h,$^) -o $@ ${FLAGS}
 
 
