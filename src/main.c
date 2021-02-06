@@ -34,13 +34,6 @@ main(void)
       ,WhitePixel(display, screen_default)
   );
 
-  int num_configs = 0;
-  GLXFBConfig * configs = glXGetFBConfigs(
-    display
-    ,DefaultScreen(display)
-    ,&num_configs
-  );
-
   int attribs[] = {
     GLX_BUFFER_SIZE, 32,
     GLX_ALPHA_SIZE, 8,
@@ -51,6 +44,7 @@ main(void)
     None
   };
 
+  int num_configs = 0;
   GLXFBConfig * configs_choosen = glXChooseFBConfig(
     display
     ,DefaultScreen(display)
@@ -96,7 +90,11 @@ main(void)
     ,glGetString(GL_VERSION)
   );
 
+  glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+
   for (;;) {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glXSwapBuffers(display, window);
   }
 
 }
