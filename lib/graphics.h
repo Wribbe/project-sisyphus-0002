@@ -1,12 +1,11 @@
 #include <X11/Xlib.h>
 
-#include <GL/glx.h>
-#include <GL/glxext.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 #include <GL/gl.h>
-#include <GL/glext.h>
 
 void
-swapBuffers(Window * window);
+swapBuffers(EGLSurface * surface);
 
-Window *
+EGLSurface *
 init_graphics();

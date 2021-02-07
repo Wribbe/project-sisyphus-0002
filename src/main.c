@@ -4,7 +4,10 @@
 
 #include "lib/graphics.h"
 
-#include <GL/glext.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+
+#define getProc eglGetProcAddress
 
 GLfloat vertices[] = {
   0.0f, 0.5f, 0.0f,
@@ -48,66 +51,25 @@ PFNGLUSEPROGRAMPROC glUseProgram;
 int
 main(void)
 {
-  Window * window = init_graphics();
+  EGLSurface * surface = init_graphics();
 
   glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
 
-  glGenBuffers = (PFNGLGENBUFFERSPROC)glXGetProcAddress(
-    (const GLubyte*)"glGenBuffers"
-  );
-
-  glBindBuffer = (PFNGLBINDBUFFERPROC)glXGetProcAddress(
-    (const GLubyte*)"glBindBuffer"
-  );
-
-  glBufferData = (PFNGLBUFFERDATAPROC)glXGetProcAddress(
-    (const GLubyte*)"glBufferData"
-  );
-
-  glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glXGetProcAddress(
-    (const GLubyte*)"glGenVertexArrays"
-  );
-
-  glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)glXGetProcAddress(
-    (const GLubyte*)"glBindVertexArray"
-  );
-
-  glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)glXGetProcAddress(
-    (const GLubyte*)"glEnableVertexAttribArray"
-  );
-
-  glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)glXGetProcAddress(
-    (const GLubyte*)"glVertexAttribPointer"
-  );
-
-  glCreateShader = (PFNGLCREATESHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glCreateShader"
-  );
-
-  glShaderSource = (PFNGLSHADERSOURCEPROC)glXGetProcAddress(
-    (const  GLubyte*)"glShaderSource"
-  );
-
-  glCompileShader = (PFNGLCOMPILESHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glCompileShader"
-  );
-
-  glCreateProgram = (PFNGLCREATEPROGRAMPROC)glXGetProcAddress(
-    (const  GLubyte*)"glCreateProgram"
-  );
-
-  glAttachShader = (PFNGLATTACHSHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glAttachShader"
-  );
-
-  glLinkProgram = (PFNGLLINKPROGRAMPROC)glXGetProcAddress(
-    (const  GLubyte*)"glLinkProgram"
-  );
-
-  glUseProgram = (PFNGLUSEPROGRAMPROC)glXGetProcAddress(
-    (const  GLubyte*)"glUseProgram"
-  );
+  glGenBuffers = (PFNGLGENBUFFERSPROC)getProc("glGenBuffers");
+  glBindBuffer = (PFNGLBINDBUFFERPROC)getProc("glBindBuffer");
+  glBufferData = (PFNGLBUFFERDATAPROC)getProc("glBufferData");
+  glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)getProc("glGenVertexArrays");
+  glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)getProc("glBindVertexArray");
+  glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)getProc("glEnableVertexAttribArray");
+  glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)getProc("glVertexAttribPointer");
+  glCreateShader = (PFNGLCREATESHADERPROC)getProc("glCreateShader");
+  glShaderSource = (PFNGLSHADERSOURCEPROC)getProc("glShaderSource");
+  glCompileShader = (PFNGLCOMPILESHADERPROC)getProc("glCompileShader");
+  glCreateProgram = (PFNGLCREATEPROGRAMPROC)getProc("glCreateProgram");
+  glAttachShader = (PFNGLATTACHSHADERPROC)getProc("glAttachShader");
+  glLinkProgram = (PFNGLLINKPROGRAMPROC)getProc("glLinkProgram");
+  glUseProgram = (PFNGLUSEPROGRAMPROC)getProc("glUseProgram");
 
 
   GLuint vbo = 0;
@@ -141,7 +103,7 @@ main(void)
   for (;;) {
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    swapBuffers(window);
+    swapBuffers(surface);
   }
 
 }
