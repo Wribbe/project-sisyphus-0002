@@ -6,11 +6,51 @@
 
 Window window;
 Display * display;
+bool window_open = true;
+
+Atom WM_DELETE_WINDOW;
 
 
 void
 swapBuffers(Window * window) {
   glXSwapBuffers(display, *window);
+}
+
+
+
+void
+events_process()
+{
+  XEvent event = {0};
+
+  while (XPending(display)) {
+    XFlush(display);
+    XNextEvent(display, &event);
+    switch(event.type) {
+      case DestroyNotify:
+        printf("%s\n", "Window got destroyed.");
+        break;
+      case ClientMessage:
+        printf("%s\n", "Client Message.");
+        XDestroyWindow(display, window);
+        window_open = false;
+        printf("%s\n", "Window open set to false.");
+        break;
+      default:
+        printf("Unknown %d\n", event.type);
+        break;
+    }
+    printf("Got event of type %d\n", event.type);
+  }
+  printf("%s\n", "Processing events done.");
+
+}
+
+
+bool
+window_is_open() {
+  printf("Window open: %s\n", window_open ? "True" : "False");
+  return window_open;
 }
 
 
@@ -84,6 +124,14 @@ init_graphics()
 
   XMapWindow(display, window);
 
+  WM_DELETE_WINDOW = XInternAtom(display, "WM_DELETE_WINDOW", false);
+
+  Atom protocols[] = {
+    WM_DELETE_WINDOW
+  };
+
+  XSetWMProtocols(display, window, protocols, sizeof(protocols)/sizeof(Atom));
+
   if (!glXMakeCurrent(display, window, context)) {
     printf("%s\n", "Setting context did not work, aborting.\n");
     exit(EXIT_FAILURE);
@@ -93,6 +141,8 @@ init_graphics()
     "Running the following OpenGL context: %s\n"
     ,glGetString(GL_VERSION)
   );
+
+  XSelectInput(display, window, KeyPressMask | KeyReleaseMask | ExposureMask );
 
   return &window;
 }

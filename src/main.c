@@ -138,10 +138,12 @@ main(void)
 
   glUseProgram(shader_program);
 
-  for (;;) {
+  while (window_is_open()) {
+    events_process();
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     swapBuffers(window);
   }
+  printf("%s\n", "Outside event loop..");
 
 }
