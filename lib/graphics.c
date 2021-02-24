@@ -10,6 +10,7 @@ bool window_open = true;
 GLXContext context = {0};
 
 Atom WM_DELETE_WINDOW;
+Atom WM_PROTOCOLS;
 
 
 void
@@ -27,15 +28,20 @@ events_process()
   while (XPending(display)) {
     XFlush(display);
     XNextEvent(display, &event);
+    XClientMessageEvent * message = NULL;
     switch(event.type) {
       case DestroyNotify:
         printf("%s\n", "Window got destroyed.");
         break;
       case ClientMessage:
-        printf("%s\n", "Client Message.");
-        window_open = false;
-        printf("%s\n", "Window open set to false.");
-        break;
+        message = (XClientMessageEvent*)&event;
+        if (message->message_type == WM_PROTOCOLS) {
+          if (message->data.l[0] == WM_DELETE_WINDOW) {
+            window_open = false;
+            printf("%s\n", "Window open set to false.");
+            break;
+          }
+        }
       default:
         printf("Unknown %d\n", event.type);
         break;
@@ -134,6 +140,7 @@ init_graphics()
   XMapWindow(display, window);
 
   WM_DELETE_WINDOW = XInternAtom(display, "WM_DELETE_WINDOW", false);
+  WM_PROTOCOLS = XInternAtom(display, "WM_PROTOCOLS", false);
 
   Atom protocols[] = {
     WM_DELETE_WINDOW
