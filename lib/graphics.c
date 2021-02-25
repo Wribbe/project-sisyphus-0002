@@ -78,6 +78,8 @@ init_graphics()
     exit(EXIT_FAILURE);
   }
 
+  XAutoRepeatOff(display);
+
   int screen_default = DefaultScreen(display);
 
   window = XCreateSimpleWindow(
