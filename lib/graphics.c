@@ -41,6 +41,12 @@ events_process()
             break;
           }
         }
+      case KeyPress:
+        printf("%s\n", "Key press event.");
+        break;
+      case KeyRelease:
+        printf("%s\n", "Key release event.");
+        break;
       default:
         printf("Unknown %d\n", event.type);
         break;
