@@ -38,7 +38,6 @@ events_process()
         if (message->message_type == WM_PROTOCOLS) {
           if (message->data.l[0] == WM_DELETE_WINDOW) {
             window_open = false;
-            printf("%s\n", "Window open set to false.");
             break;
           }
         }
@@ -46,20 +45,14 @@ events_process()
         printf("Unknown %d\n", event.type);
         break;
     }
-    printf("Got event of type %d\n", event.type);
   }
-  printf("%s\n", "Processing events done.");
-
 }
 
 
 bool
 window_is_open() {
-  printf("Window open: %s\n", window_open ? "True" : "False");
   if (!window_open) {
-    printf("%s\n", "Window set to close, derstroying!");
     glXDestroyContext(display, context);
-    printf("%s\n", "Context destroyed.");
     XUnmapWindow(display, window);
     XDestroyWindow(display, window);
     glFlush();
