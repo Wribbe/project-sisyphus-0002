@@ -19,16 +19,19 @@ swapBuffers(Window * window) {
 }
 
 
-
 void
 events_process()
 {
+
   XEvent event = {0};
+  XClientMessageEvent * message = NULL;
+  XKeyEvent * event_key = NULL;
 
   while (XPending(display)) {
+
     XFlush(display);
     XNextEvent(display, &event);
-    XClientMessageEvent * message = NULL;
+
     switch(event.type) {
       case DestroyNotify:
         printf("%s\n", "Window got destroyed.");
@@ -42,10 +45,21 @@ events_process()
           }
         }
       case KeyPress:
-        printf("%s\n", "Key press event.");
-        break;
       case KeyRelease:
-        printf("%s\n", "Key release event.");
+        event_key = (XKeyEvent *)&event;
+        if (XPending(display)) {
+          XEvent event_next = {0};
+          XPeekEvent(display, &event_next);
+          if (((XKeyEvent *)&event_next)->time == event_key->time) {
+            /* Skip repeated events. */
+            XNextEvent(display, &event_next);
+            continue;
+          }
+        }
+        bool released = event.type == KeyRelease;
+        printf("Key %d, was %s.\n", event_key->keycode, released ? "released" : "pressed");
+        printf("time: %lu\n", event_key->time);
+
         break;
       default:
         printf("Unknown %d\n", event.type);
