@@ -8,14 +8,46 @@ Window window;
 Display * display;
 bool window_open = true;
 GLXContext context = {0};
+bool key_is_down[512] = {0};
 
 Atom WM_DELETE_WINDOW;
 Atom WM_PROTOCOLS;
+
+bool ui_keyboard = false;
 
 
 void
 swapBuffers(Window * window) {
   glXSwapBuffers(display, *window);
+}
+
+
+void
+ui_draw_keyboard(void)
+{
+  if (!ui_keyboard) {
+    return;
+  }
+
+  for (int i=0; i<512; i++) {
+    if (key_is_down[i]) {
+      printf("Key: %d is down\n", i);
+    }
+  }
+}
+
+
+void
+react_to_events(void)
+{
+
+  if (key_is_down[76]) { // F10
+    ui_keyboard = !ui_keyboard;
+    printf("Ui-keyboard is %s\n", ui_keyboard ? "ON" : "OFF");
+    key_is_down[76] = false;
+  }
+
+  ui_draw_keyboard();
 }
 
 
@@ -56,13 +88,14 @@ events_process()
             continue;
           }
         }
-        bool released = event.type == KeyRelease;
+        key_is_down[event_key->keycode] = event.type == KeyPress;
         break;
       default:
         printf("Unknown %d\n", event.type);
         break;
     }
   }
+  react_to_events();
 }
 
 
