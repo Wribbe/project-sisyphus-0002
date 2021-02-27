@@ -57,9 +57,6 @@ events_process()
           }
         }
         bool released = event.type == KeyRelease;
-        printf("Key %d, was %s.\n", event_key->keycode, released ? "released" : "pressed");
-        printf("time: %lu\n", event_key->time);
-
         break;
       default:
         printf("Unknown %d\n", event.type);
