@@ -38,12 +38,38 @@ const char * fragment_shader =
 
 
 PFNGLCREATESHADERPROC glCreateShader;
+PFNGLDELETESHADERPROC glDeleteShader;
 PFNGLSHADERSOURCEPROC glShaderSource;
 PFNGLCOMPILESHADERPROC glCompileShader;
 PFNGLCREATEPROGRAMPROC glCreateProgram;
 PFNGLATTACHSHADERPROC glAttachShader;
 PFNGLLINKPROGRAMPROC glLinkProgram;
 PFNGLUSEPROGRAMPROC glUseProgram;
+
+GLuint
+program_create(
+  const char * source_vertex,
+  const char * source_fragment
+){
+  GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertex, 1, &source_vertex, NULL);
+  glCompileShader(vertex);
+
+  GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragment, 1, &source_fragment, NULL);
+  glCompileShader(fragment);
+
+  GLuint program = glCreateProgram();
+  glAttachShader(program, vertex);
+  glAttachShader(program, fragment);
+  glLinkProgram(program);
+
+  glDeleteShader(vertex);
+  glDeleteShader(fragment);
+
+  return program;
+}
+
 
 int
 main(void)
@@ -85,6 +111,10 @@ main(void)
     (const  GLubyte*)"glCreateShader"
   );
 
+  glDeleteShader = (PFNGLDELETESHADERPROC)glXGetProcAddress(
+    (const  GLubyte*)"glDeleteShader"
+  );
+
   glShaderSource = (PFNGLSHADERSOURCEPROC)glXGetProcAddress(
     (const  GLubyte*)"glShaderSource"
   );
@@ -123,24 +153,14 @@ main(void)
   glBindBuffer(GL_ARRAY_BUFFER, vao);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vs, 1, &vertex_shader, NULL);
-  glCompileShader(vs);
+  GLuint shader_program = program_create(vertex_shader, fragment_shader);
 
-  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fs, 1, &fragment_shader, NULL);
-  glCompileShader(fs);
 
-  GLuint shader_program = glCreateProgram();
-  glAttachShader(shader_program, fs);
-  glAttachShader(shader_program, vs);
-  glLinkProgram(shader_program);
-
-  glUseProgram(shader_program);
 
   while (window_is_open()) {
     events_process();
     glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(shader_program);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     draw_ui();
     swapBuffers(window);
