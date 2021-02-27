@@ -153,14 +153,15 @@ main(void)
   glBindBuffer(GL_ARRAY_BUFFER, vao);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-  GLuint shader_program = program_create(vertex_shader, fragment_shader);
+  GLuint program_shader = program_create(vertex_shader, fragment_shader);
+
 
 
 
   while (window_is_open()) {
     events_process();
     glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shader_program);
+    glUseProgram(program_shader);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     draw_ui();
     swapBuffers(window);
