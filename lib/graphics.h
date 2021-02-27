@@ -19,3 +19,6 @@ events_process();
 
 bool
 window_is_open();
+
+void
+draw_ui();

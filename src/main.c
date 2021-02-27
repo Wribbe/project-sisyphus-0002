@@ -142,6 +142,7 @@ main(void)
     events_process();
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    draw_ui();
     swapBuffers(window);
   }
   printf("%s\n", "Outside event loop..");

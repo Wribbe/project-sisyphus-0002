@@ -23,7 +23,7 @@ swapBuffers(Window * window) {
 
 
 void
-ui_draw_keyboard(void)
+draw_ui_keyboard(void)
 {
   if (!ui_keyboard) {
     return;
@@ -38,6 +38,13 @@ ui_draw_keyboard(void)
 
 
 void
+draw_ui(void)
+{
+  draw_ui_keyboard();
+}
+
+
+void
 react_to_events(void)
 {
 
@@ -47,7 +54,6 @@ react_to_events(void)
     key_is_down[76] = false;
   }
 
-  ui_draw_keyboard();
 }
 
 
