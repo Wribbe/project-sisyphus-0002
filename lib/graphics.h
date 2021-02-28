@@ -26,6 +26,10 @@ extern PFNGLCREATEPROGRAMPROC glCreateProgram;
 extern PFNGLATTACHSHADERPROC glAttachShader;
 extern PFNGLLINKPROGRAMPROC glLinkProgram;
 extern PFNGLUSEPROGRAMPROC glUseProgram;
+extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+extern PFNGLUNIFORM3FVPROC glUniform3fv;
+extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
+extern PFNGLGETSHADERIVPROC glGetShaderiv;
 
 
 void

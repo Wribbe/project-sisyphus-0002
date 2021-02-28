@@ -31,7 +31,10 @@ PFNGLCREATEPROGRAMPROC glCreateProgram;
 PFNGLATTACHSHADERPROC glAttachShader;
 PFNGLLINKPROGRAMPROC glLinkProgram;
 PFNGLUSEPROGRAMPROC glUseProgram;
-
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+PFNGLUNIFORM3FVPROC glUniform3fv;
+PFNGLGETPROGRAMIVPROC glGetProgramiv;
+PFNGLGETSHADERIVPROC glGetShaderiv;
 
 void
 swapBuffers(Window * window) {
@@ -101,15 +104,40 @@ init_methods(void)
   glUseProgram = (PFNGLUSEPROGRAMPROC)glXGetProcAddress(
     (const  GLubyte*)"glUseProgram"
   );
+
+  glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)glXGetProcAddress(
+    (const  GLubyte*)"glGetUniformLocation"
+  );
+
+  glUniform3fv = (PFNGLUNIFORM3FVPROC)glXGetProcAddress(
+    (const  GLubyte*)"glUniform3fv"
+  );
+
+  glGetShaderiv = (PFNGLGETSHADERIVPROC)glXGetProcAddress(
+    (const  GLubyte*)"glGetShaderiv"
+  );
+
+  glGetProgramiv = (PFNGLGETPROGRAMIVPROC)glXGetProcAddress(
+    (const  GLubyte*)"glGetProgramiv"
+  );
+
 }
 
 
 void
-draw_ui_keyboard(void)
+draw_ui_keyboard(GLuint program, GLuint vao)
 {
   if (!ui_keyboard) {
     return;
   }
+
+  GLuint loc_color_ui = glGetUniformLocation(program, "u_color_ui");
+  float color_blue[] = {0.0f, 1.0f, 0.0f};
+  glUniform3fv(loc_color_ui, 1, color_blue);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vao);
+  glUseProgram(program);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
 
   for (int i=0; i<512; i++) {
     if (key_is_down[i]) {
@@ -122,10 +150,7 @@ draw_ui_keyboard(void)
 void
 draw_ui(GLuint program, GLuint vao)
 {
-  glBindBuffer(GL_ARRAY_BUFFER, vao);
-  glUseProgram(program);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-  draw_ui_keyboard();
+  draw_ui_keyboard(program, vao);
 }
 
 

@@ -39,9 +39,10 @@ const char * src_ui_vertex =
 
 const char * src_ui_fragment =
 "#version 400\n"
+"uniform vec3 u_color_ui;\n"
 "out vec4 frag_color;\n"
 "void main() {\n"
-"  frag_color = vec4(1.0, 1.0, 1.0, 1.0);\n"
+"  frag_color = vec4(u_color_ui, 1.0f);\n"
 "}\n";
 
 
@@ -50,18 +51,32 @@ program_create(
   const char * source_vertex,
   const char * source_fragment
 ){
+  int success = 0;
+
   GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex, 1, &source_vertex, NULL);
   glCompileShader(vertex);
+  glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    printf("%s\n", "Vertex shader failed to compile.");
+  }
 
   GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragment, 1, &source_fragment, NULL);
   glCompileShader(fragment);
+  glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    printf("%s\n", "Fragment shader failed to compile.");
+  }
 
   GLuint program = glCreateProgram();
   glAttachShader(program, vertex);
   glAttachShader(program, fragment);
   glLinkProgram(program);
+  glGetProgramiv(program, GL_LINK_STATUS, &success);
+  if (!success) {
+    printf("%s\n", "Failed to link program.");
+  }
 
   glDeleteShader(vertex);
   glDeleteShader(fragment);
