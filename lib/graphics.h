@@ -30,6 +30,7 @@ extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 extern PFNGLUNIFORM3FVPROC glUniform3fv;
 extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
 extern PFNGLGETSHADERIVPROC glGetShaderiv;
+extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
 
 
 void

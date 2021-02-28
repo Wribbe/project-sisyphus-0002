@@ -61,13 +61,16 @@ program_create(
   const char * source_fragment
 ){
   int success = 0;
+  size_t size_buffer = 512;
+  char buffer[size_buffer];
 
   GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex, 1, &source_vertex, NULL);
   glCompileShader(vertex);
   glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
   if (!success) {
-    printf("%s\n", "Vertex shader failed to compile.");
+    glGetShaderInfoLog(vertex, size_buffer, NULL, buffer);
+    printf("Vertex shader failed to compile:\n%s.", buffer);
   }
 
   GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -75,7 +78,8 @@ program_create(
   glCompileShader(fragment);
   glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
   if (!success) {
-    printf("%s\n", "Fragment shader failed to compile.");
+    glGetShaderInfoLog(fragment, size_buffer, NULL, buffer);
+    printf("Fragment shader failed to compile:\n%s.", buffer);
   }
 
   GLuint program = glCreateProgram();

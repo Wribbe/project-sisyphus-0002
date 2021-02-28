@@ -35,6 +35,7 @@ PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 PFNGLUNIFORM3FVPROC glUniform3fv;
 PFNGLGETPROGRAMIVPROC glGetProgramiv;
 PFNGLGETSHADERIVPROC glGetShaderiv;
+PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
 
 void
 swapBuffers(Window * window) {
@@ -119,6 +120,10 @@ init_methods(void)
 
   glGetProgramiv = (PFNGLGETPROGRAMIVPROC)glXGetProcAddress(
     (const  GLubyte*)"glGetProgramiv"
+  );
+
+  glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)glXGetProcAddress(
+    (const  GLubyte*)"glGetShaderInfoLog"
   );
 
 }
