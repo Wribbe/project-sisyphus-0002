@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include <lib/graphics.h>
+#include "lib/graphics.h"
 
 Window window;
 Display * display;
@@ -15,10 +15,92 @@ Atom WM_PROTOCOLS;
 
 bool ui_keyboard = false;
 
+PFNGLGENBUFFERSPROC glGenBuffers;
+PFNGLBINDBUFFERPROC glBindBuffer;
+PFNGLBUFFERDATAPROC glBufferData;
+PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+
+PFNGLCREATESHADERPROC glCreateShader;
+PFNGLDELETESHADERPROC glDeleteShader;
+PFNGLSHADERSOURCEPROC glShaderSource;
+PFNGLCOMPILESHADERPROC glCompileShader;
+PFNGLCREATEPROGRAMPROC glCreateProgram;
+PFNGLATTACHSHADERPROC glAttachShader;
+PFNGLLINKPROGRAMPROC glLinkProgram;
+PFNGLUSEPROGRAMPROC glUseProgram;
+
 
 void
 swapBuffers(Window * window) {
   glXSwapBuffers(display, *window);
+}
+
+
+void
+init_methods(void)
+{
+  glGenBuffers = (PFNGLGENBUFFERSPROC)glXGetProcAddress(
+    (const GLubyte*)"glGenBuffers"
+  );
+
+  glBindBuffer = (PFNGLBINDBUFFERPROC)glXGetProcAddress(
+    (const GLubyte*)"glBindBuffer"
+  );
+
+  glBufferData = (PFNGLBUFFERDATAPROC)glXGetProcAddress(
+    (const GLubyte*)"glBufferData"
+  );
+
+  glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glXGetProcAddress(
+    (const GLubyte*)"glGenVertexArrays"
+  );
+
+  glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)glXGetProcAddress(
+    (const GLubyte*)"glBindVertexArray"
+  );
+
+  glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)glXGetProcAddress(
+    (const GLubyte*)"glEnableVertexAttribArray"
+  );
+
+  glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)glXGetProcAddress(
+    (const GLubyte*)"glVertexAttribPointer"
+  );
+
+  glCreateShader = (PFNGLCREATESHADERPROC)glXGetProcAddress(
+    (const  GLubyte*)"glCreateShader"
+  );
+
+  glDeleteShader = (PFNGLDELETESHADERPROC)glXGetProcAddress(
+    (const  GLubyte*)"glDeleteShader"
+  );
+
+  glShaderSource = (PFNGLSHADERSOURCEPROC)glXGetProcAddress(
+    (const  GLubyte*)"glShaderSource"
+  );
+
+  glCompileShader = (PFNGLCOMPILESHADERPROC)glXGetProcAddress(
+    (const  GLubyte*)"glCompileShader"
+  );
+
+  glCreateProgram = (PFNGLCREATEPROGRAMPROC)glXGetProcAddress(
+    (const  GLubyte*)"glCreateProgram"
+  );
+
+  glAttachShader = (PFNGLATTACHSHADERPROC)glXGetProcAddress(
+    (const  GLubyte*)"glAttachShader"
+  );
+
+  glLinkProgram = (PFNGLLINKPROGRAMPROC)glXGetProcAddress(
+    (const  GLubyte*)"glLinkProgram"
+  );
+
+  glUseProgram = (PFNGLUSEPROGRAMPROC)glXGetProcAddress(
+    (const  GLubyte*)"glUseProgram"
+  );
 }
 
 
@@ -38,8 +120,11 @@ draw_ui_keyboard(void)
 
 
 void
-draw_ui(void)
+draw_ui(GLuint program, GLuint vao)
 {
+  glBindBuffer(GL_ARRAY_BUFFER, vao);
+  glUseProgram(program);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
   draw_ui_keyboard();
 }
 
@@ -121,6 +206,8 @@ window_is_open() {
 Window *
 init_graphics()
 {
+
+  init_methods();
 
   display = XOpenDisplay(NULL);
   if (display == NULL) {

@@ -11,7 +11,8 @@ all: ${BINS}
 
 
 ${DIR_BIN}/% : ${DIR_SRC}/%.c lib/graphics.h lib/graphics.c Makefile | ${DIR_BIN}
-	${CC} $(filter %.c %.h,$^) -o $@ ${FLAGS}
+	${CC} $(filter %.c,$^) -o $@ ${FLAGS}
+
 
 
 ${DIR_BIN} :

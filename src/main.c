@@ -4,21 +4,13 @@
 
 #include "lib/graphics.h"
 
-#include <GL/glext.h>
-
 GLfloat vertices[] = {
   0.0f, 0.5f, 0.0f,
   0.5f,-0.5f, 0.0f,
  -0.5f,-0.5f, 0.0f
 };
 
-PFNGLGENBUFFERSPROC glGenBuffers;
-PFNGLBINDBUFFERPROC glBindBuffer;
-PFNGLBUFFERDATAPROC glBufferData;
-PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
-PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
-PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
-PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+
 
 
 const char * vertex_shader =
@@ -37,14 +29,21 @@ const char * fragment_shader =
 "}\n";
 
 
-PFNGLCREATESHADERPROC glCreateShader;
-PFNGLDELETESHADERPROC glDeleteShader;
-PFNGLSHADERSOURCEPROC glShaderSource;
-PFNGLCOMPILESHADERPROC glCompileShader;
-PFNGLCREATEPROGRAMPROC glCreateProgram;
-PFNGLATTACHSHADERPROC glAttachShader;
-PFNGLLINKPROGRAMPROC glLinkProgram;
-PFNGLUSEPROGRAMPROC glUseProgram;
+const char * src_vertex_ui =
+"#version 400\n"
+"in vec3 vp;\n"
+"void main() {\n"
+"  gl_Position = vec4(vp, 1.0);\n"
+"}\n";
+
+
+const char * src_fragment_ui =
+"#version 400\n"
+"out vec4 frag_color;\n"
+"void main() {\n"
+"  frag_color = vec4(1.0, 1.0, 1.0, 1.0);\n"
+"}\n";
+
 
 GLuint
 program_create(
@@ -79,72 +78,10 @@ main(void)
   glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
 
-  glGenBuffers = (PFNGLGENBUFFERSPROC)glXGetProcAddress(
-    (const GLubyte*)"glGenBuffers"
-  );
-
-  glBindBuffer = (PFNGLBINDBUFFERPROC)glXGetProcAddress(
-    (const GLubyte*)"glBindBuffer"
-  );
-
-  glBufferData = (PFNGLBUFFERDATAPROC)glXGetProcAddress(
-    (const GLubyte*)"glBufferData"
-  );
-
-  glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glXGetProcAddress(
-    (const GLubyte*)"glGenVertexArrays"
-  );
-
-  glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)glXGetProcAddress(
-    (const GLubyte*)"glBindVertexArray"
-  );
-
-  glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)glXGetProcAddress(
-    (const GLubyte*)"glEnableVertexAttribArray"
-  );
-
-  glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)glXGetProcAddress(
-    (const GLubyte*)"glVertexAttribPointer"
-  );
-
-  glCreateShader = (PFNGLCREATESHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glCreateShader"
-  );
-
-  glDeleteShader = (PFNGLDELETESHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glDeleteShader"
-  );
-
-  glShaderSource = (PFNGLSHADERSOURCEPROC)glXGetProcAddress(
-    (const  GLubyte*)"glShaderSource"
-  );
-
-  glCompileShader = (PFNGLCOMPILESHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glCompileShader"
-  );
-
-  glCreateProgram = (PFNGLCREATEPROGRAMPROC)glXGetProcAddress(
-    (const  GLubyte*)"glCreateProgram"
-  );
-
-  glAttachShader = (PFNGLATTACHSHADERPROC)glXGetProcAddress(
-    (const  GLubyte*)"glAttachShader"
-  );
-
-  glLinkProgram = (PFNGLLINKPROGRAMPROC)glXGetProcAddress(
-    (const  GLubyte*)"glLinkProgram"
-  );
-
-  glUseProgram = (PFNGLUSEPROGRAMPROC)glXGetProcAddress(
-    (const  GLubyte*)"glUseProgram"
-  );
-
-
   GLuint vbo = 0;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
 
   GLuint vao = 0;
   glGenVertexArrays(1, &vao);
@@ -156,14 +93,30 @@ main(void)
   GLuint program_shader = program_create(vertex_shader, fragment_shader);
 
 
+  GLuint vao_ui = 0;
+  glGenVertexArrays(1, &vao_ui);
+  glBindVertexArray(vao_ui);
+  glBindBuffer(GL_ARRAY_BUFFER, vao_ui);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+  GLuint vbo_ui = 0;
+  glGenBuffers(1, &vbo_ui);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  GLuint program_ui = program_create(src_vertex_ui, src_fragment_ui);
 
 
   while (window_is_open()) {
     events_process();
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vao);
     glUseProgram(program_shader);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    draw_ui();
+
+    draw_ui(program_ui, vao_ui);
+
     swapBuffers(window);
   }
   printf("%s\n", "Outside event loop..");
