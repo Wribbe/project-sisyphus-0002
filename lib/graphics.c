@@ -131,14 +131,14 @@ draw_ui_keyboard(GLuint program, GLuint vao)
     return;
   }
 
+  glBindVertexArray(vao);
   glUseProgram(program);
 
   GLuint loc_color_ui = glGetUniformLocation(program, "u_color_ui");
   float color_blue[] = {0.0f, 0.0f, 1.0f};
   glUniform3fv(loc_color_ui, 1, color_blue);
 
-  glBindBuffer(GL_ARRAY_BUFFER, vao);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
 
   for (int i=0; i<512; i++) {
     if (key_is_down[i]) {

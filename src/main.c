@@ -10,6 +10,15 @@ GLfloat vertices[] = {
  -0.5f,-0.5f, 0.0f
 };
 
+GLfloat vertices_square[] = {
+  0.5f, 0.5f, 0.0f,
+ -0.5f, 0.5f, 0.0f,
+ -0.5f,-0.5f, 0.0f,
+ -0.5f,-0.5f, 0.0f,
+  0.5f,-0.5f, 0.0f,
+  0.5f, 0.5f, 0.0f
+};
+
 
 
 
@@ -102,31 +111,35 @@ main(void)
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vao);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
   GLuint program_shader = program_create(vertex_shader, fragment_shader);
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+
+  GLuint vbo_ui = 0;
+  glGenBuffers(1, &vbo_ui);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_ui);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_square), vertices_square, GL_STATIC_DRAW);
 
   GLuint vao_ui = 0;
   glGenVertexArrays(1, &vao_ui);
   glBindVertexArray(vao_ui);
-  glBindBuffer(GL_ARRAY_BUFFER, vao_ui);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  GLuint vbo_ui = 0;
-  glGenBuffers(1, &vbo_ui);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   GLuint program_ui = program_create(src_ui_vertex, src_ui_fragment);
+  glBindVertexArray(0);
 
 
   while (window_is_open()) {
     events_process();
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vao);
+    glBindVertexArray(vao);
     glUseProgram(program_shader);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
