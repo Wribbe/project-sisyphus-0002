@@ -29,7 +29,7 @@ const char * fragment_shader =
 "}\n";
 
 
-const char * src_vertex_ui =
+const char * src_ui_vertex =
 "#version 400\n"
 "in vec3 vp;\n"
 "void main() {\n"
@@ -37,7 +37,7 @@ const char * src_vertex_ui =
 "}\n";
 
 
-const char * src_fragment_ui =
+const char * src_ui_fragment =
 "#version 400\n"
 "out vec4 frag_color;\n"
 "void main() {\n"
@@ -104,7 +104,7 @@ main(void)
   glGenBuffers(1, &vbo_ui);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  GLuint program_ui = program_create(src_vertex_ui, src_fragment_ui);
+  GLuint program_ui = program_create(src_ui_vertex, src_ui_fragment);
 
 
   while (window_is_open()) {
