@@ -139,9 +139,15 @@ draw_ui_keyboard(GLuint program, GLuint vao)
   glBindVertexArray(vao);
   glUseProgram(program);
 
-  GLuint loc_color_ui = glGetUniformLocation(program, "u_color_ui");
   float color_blue[] = {0.0f, 0.0f, 1.0f};
+  float scale[] = {0.5f, 0.5f, 1.0f};
+
+  GLuint loc_color_ui = glGetUniformLocation(program, "u_color_ui");
   glUniform3fv(loc_color_ui, 1, color_blue);
+
+  GLuint loc_scale = glGetUniformLocation(program, "u_scale");
+  glUniform3fv(loc_scale, 1, scale);
+
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
 
