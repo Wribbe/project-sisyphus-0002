@@ -31,6 +31,7 @@ extern PFNGLUNIFORM3FVPROC glUniform3fv;
 extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
 extern PFNGLGETSHADERIVPROC glGetShaderiv;
 extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+extern PFNGLUNIFORM2FVPROC glUniform2fv;
 
 
 void

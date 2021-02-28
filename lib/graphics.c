@@ -33,6 +33,7 @@ PFNGLLINKPROGRAMPROC glLinkProgram;
 PFNGLUSEPROGRAMPROC glUseProgram;
 PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 PFNGLUNIFORM3FVPROC glUniform3fv;
+PFNGLUNIFORM2FVPROC glUniform2fv;
 PFNGLGETPROGRAMIVPROC glGetProgramiv;
 PFNGLGETSHADERIVPROC glGetShaderiv;
 PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
@@ -126,6 +127,10 @@ init_methods(void)
     (const  GLubyte*)"glGetShaderInfoLog"
   );
 
+  glUniform2fv = (PFNGLUNIFORM2FVPROC)glXGetProcAddress(
+    (const  GLubyte*)"glUniform2fv"
+  );
+
 }
 
 
@@ -139,22 +144,32 @@ draw_ui_keyboard(GLuint program, GLuint vao)
   glBindVertexArray(vao);
   glUseProgram(program);
 
-  float color_blue[] = {0.0f, 0.0f, 1.0f};
-  float scale[] = {0.5f, 0.5f, 1.0f};
+  float color_up[] = {0.3f, 0.3f, 0.0f};
+  float color_down[] = {1.0f, 0.0f, 1.0f};
+  float * color = NULL;
+  float scale[] = {0.05f, 0.05f, 1.0f};
 
-  GLuint loc_color_ui = glGetUniformLocation(program, "u_color_ui");
-  glUniform3fv(loc_color_ui, 1, color_blue);
-
-  GLuint loc_scale = glGetUniformLocation(program, "u_scale");
-  glUniform3fv(loc_scale, 1, scale);
-
-
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  size_t len_row = 30;
 
   for (int i=0; i<512; i++) {
     if (key_is_down[i]) {
-      printf("Key: %d is down\n", i);
+      color = color_down;
+    } else {
+      color = color_up;
     }
+
+    float offset[] = {-0.9+0.053f*(i%len_row),  0.4-0.053f*(i/len_row)};
+
+    GLuint loc_color_ui = glGetUniformLocation(program, "u_color_ui");
+    glUniform3fv(loc_color_ui, 1, color);
+
+    GLuint loc_scale = glGetUniformLocation(program, "u_scale");
+    glUniform3fv(loc_scale, 1, scale);
+
+    GLuint loc_offset = glGetUniformLocation(program, "u_offset");
+    glUniform2fv(loc_offset, 1, offset);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
   }
 }
 

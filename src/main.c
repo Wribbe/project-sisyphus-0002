@@ -41,9 +41,10 @@ const char * fragment_shader =
 const char * src_ui_vertex =
 "#version 400\n"
 "uniform vec3 u_scale;\n"
+"uniform vec2 u_offset;\n"
 "in vec3 vp;\n"
 "void main() {\n"
-"  gl_Position = vec4(u_scale*vp, 1.0);\n"
+"  gl_Position = vec4((u_scale*vp)+vec3(u_offset, 1.0f), 1.0);\n"
 "}\n";
 
 
